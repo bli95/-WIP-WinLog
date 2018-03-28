@@ -1,9 +1,15 @@
+using Gtk;
 using System;
- 
-public class HelloWorld
+
+class Hello
 {
-    static public void Main ()
+    static void Main ()
     {
-        Console.WriteLine ("Hello Mono World");
+        Application.Init ();
+
+        Window window = new Window ("Hello Mono World");
+        window.Show ();
+
+        Application.Run ();
     }
 }
