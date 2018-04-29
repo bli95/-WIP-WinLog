@@ -14,7 +14,7 @@ using System.Text;
 
 public static class Globals
 {
-    public const string serverIP = "127.0.0.1";
+    public const string serverIP = "10.0.2.15";
     public const Int32 keyPort = 40404;
     public const Int32 screenPort = 40405;
 }
