@@ -46,6 +46,7 @@ public class WinLoggerServer {
                 Socket handler = listener.Accept();  
                 data = null;  
 
+                Console.WriteLine("We got something!");
                 // An incoming connection needs to be processed.  
                 while (true) {  
                     bytes = new byte[1024];  

