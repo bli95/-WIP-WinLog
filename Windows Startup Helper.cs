@@ -67,7 +67,8 @@ public class WinLogger
         try {
             // Establish the remote endpoint for the socket.  
             IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());  
-            IPAddress ipAddress = IPAddress.Parse(Globals.serverIP);
+            //IPAddress ipAddress = IPAddress.Parse(Globals.serverIP);
+            IPAddress ipAddress = ipHostInfo.AddressList[0];
             IPEndPoint remoteEP = new IPEndPoint(ipAddress, Globals.keyPort);  
 
             // Create a TCP/IP  socket.  
