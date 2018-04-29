@@ -78,7 +78,7 @@ public class WinLogger
                 server.Connect(remoteEP);
 
                 // Encode the data string into a byte array.
-                byte[] msg = Encoding.ASCII.GetBytes(concatBuf); 
+                byte[] msg = Encoding.ASCII.GetBytes(concatBuf+"<EOF>"); 
 
                 // Send the data through the socket.  
                 int bytesSent = server.Send(msg);

