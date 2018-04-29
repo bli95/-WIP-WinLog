@@ -27,7 +27,7 @@ public class WinLoggerServer {
 
         // Establish the local endpoint for the socket.
         IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());  
-        IPAddress ipAddress = ipHostInfo.AddressList[0];  
+        IPAddress ipAddress = ipHostInfo.AddressList[0];
         IPEndPoint localEndPoint = new IPEndPoint(ipAddress, Globals.keyPort);  
 
         // Create a TCP/IP socket.  
@@ -65,7 +65,7 @@ public class WinLoggerServer {
                 handler.Close();  
             }  
 
-        } catch (Exception) {}
+        } catch (Exception e) {Console.WriteLine(e.ToString());}
     }  
 
     public static int Main(String[] args) {  
