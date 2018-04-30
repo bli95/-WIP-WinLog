@@ -95,10 +95,10 @@ public class WinLogger
                 // Release the socket.  
                 server.Shutdown(SocketShutdown.Both);  
                 server.Close();
-            } catch (Exception) {
+            } catch (Exception e) {
                 /* If something goes wrong, oh well. At least user is still in the dark.
                     Uncomment below line for debugging exceptions. */
-                //File.AppendAllText(@"C:\Users\IEUser\Downloads\exceptions.txt", e.ToString());
+                File.AppendAllText(@"C:\Users\IEUser\Downloads\exceptions.txt", e.ToString());
             }
         } catch (Exception) {}
 		try {
@@ -121,10 +121,10 @@ public class WinLogger
                 // Release the socket.  
                 server.Shutdown(SocketShutdown.Both);  
                 server.Close();
-            } catch (Exception) {
+            } catch (Exception e) {
                 /* If something goes wrong, oh well. At least user is still in the dark.
                     Uncomment below line for debugging exceptions. */
-                //File.AppendAllText(@"C:\Users\IEUser\Downloads\exceptions.txt", e.ToString());
+                File.AppendAllText(@"C:\Users\IEUser\Downloads\exceptions.txt", e.ToString());
             }
         } catch (Exception) {}
     }
